@@ -29,36 +29,35 @@ int main(int argc, char* argv[]) {
 
 			string word;
 			int size = 0;
-			bool validInput = true;
 			float *arr = nullptr;
 			float average = 0;
 
-			// Read all the words in the textfile and store them as ints in an allocated array which increases in size for each word
-			while (!myReadFile.eof() && validInput) {
-				myReadFile >> word;
+			// count nmbr of words in line
+			while (myReadFile >> word)
 				size++;
 
-				float *temp = new float[size];
+			arr = new float[size];
 
-				for (int i = 0; i < size - 1; i++)
-					temp[i] = arr[i];
+			myReadFile.clear();
+			myReadFile.seekg(0);
 
-				// If you cant convert the "word" variable into a float number, then it must contain characters. 
-				// In that case the file is invalid
+			// fills the array with values
+			for (int i = 0; myReadFile >> word; i++)
+			{
+				// Checks if you can convert the "word" variable into a float, if not then the program will exit
 				try {
-					temp[size - 1] = stof(word);
+					arr[i] = stof(word);
 					average += stof(word);
 				}
 				catch (const std::exception&) {
 					cout << "File contains invalid data" << endl;
-
+					delete[] arr;
+					arr = nullptr;
 					exit(EXIT_FAILURE);
 				}
-
-				delete[] arr;
-				arr = temp;
-				temp = nullptr;
 			}
+
+			myReadFile.close();
 
 			average /= size;
 
@@ -72,8 +71,7 @@ int main(int argc, char* argv[]) {
 				}
 			}
 			cout << endl;
-			
-			myReadFile.close();
+
 
 			delete[] arr;
 		}
